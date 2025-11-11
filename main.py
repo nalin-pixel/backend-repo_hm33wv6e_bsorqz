@@ -34,25 +34,86 @@ def serialize_doc(doc: dict):
             doc[k] = str(v)
     return doc
 
-# Seed minimal demo data if empty
+# Seed demo content if collections are empty
 @app.on_event("startup")
 async def seed_if_empty():
     try:
         if db is None:
             return
         if db["anime"].count_documents({}) == 0:
-            a_id = db["anime"].insert_one({
-                "title": "Demo: Ninja Chronicles",
-                "description": "A young ninja embarks on a journey.",
-                "cover_url": "https://images.unsplash.com/photo-1546443046-ed1ce6ffd1dc?q=80&w=1200&auto=format&fit=crop",
-                "tags": ["action", "adventure"],
-                "year": 2020
-            }).inserted_id
-            db["episode"].insert_many([
-                {"anime_id": str(a_id), "number": 1, "title": "A New Path", "stream_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "thumbnail_url": "https://picsum.photos/seed/ep1/600/338", "duration": 10},
-                {"anime_id": str(a_id), "number": 2, "title": "Training Days", "stream_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "thumbnail_url": "https://picsum.photos/seed/ep2/600/338", "duration": 12},
-                {"anime_id": str(a_id), "number": 3, "title": "First Mission", "stream_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "thumbnail_url": "https://picsum.photos/seed/ep3/600/338", "duration": 14},
-            ])
+            demo_anime = [
+                {
+                    "title": "Big Brother",
+                    "description": "A tournament of wits and strength across a futuristic city.",
+                    "cover_url": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1200&auto=format&fit=crop",
+                    "tags": ["drama", "sci-fi"],
+                    "year": 2021,
+                },
+                {
+                    "title": "A Will Eternal",
+                    "description": "A cultivator seeks immortality through perseverance and heart.",
+                    "cover_url": "https://images.unsplash.com/photo-1520975922284-9d78175cfea0?q=80&w=1200&auto=format&fit=crop",
+                    "tags": ["fantasy", "adventure"],
+                    "year": 2020,
+                },
+                {
+                    "title": "Over Goddess",
+                    "description": "A fallen deity walks the mortal world in search of purpose.",
+                    "cover_url": "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop",
+                    "tags": ["supernatural", "romance"],
+                    "year": 2019,
+                },
+                {
+                    "title": "The Demon Hunter",
+                    "description": "A lone hunter tracks demonic entities lurking in the shadows.",
+                    "cover_url": "https://images.unsplash.com/photo-1503342452485-86ff0a8bccc5?q=80&w=1200&auto=format&fit=crop",
+                    "tags": ["action", "dark fantasy"],
+                    "year": 2022,
+                },
+                {
+                    "title": "X Epoch Of Dragon",
+                    "description": "Dragon heirs awaken to reshape an ancient world.",
+                    "cover_url": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop",
+                    "tags": ["epic", "mythology"],
+                    "year": 2023,
+                },
+            ]
+
+            sample_videos = [
+                {
+                    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                    "thumb": "https://picsum.photos/seed/ep1/600/338",
+                    "title": "Pilot",
+                    "duration": 10,
+                },
+                {
+                    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                    "thumb": "https://picsum.photos/seed/ep2/600/338",
+                    "title": "Awakening",
+                    "duration": 12,
+                },
+                {
+                    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+                    "thumb": "https://picsum.photos/seed/ep3/600/338",
+                    "title": "Crossroads",
+                    "duration": 14,
+                },
+            ]
+
+            for a in demo_anime:
+                a_id = db["anime"].insert_one(a).inserted_id
+                # create three episodes for each anime
+                eps = []
+                for idx, vid in enumerate(sample_videos, start=1):
+                    eps.append({
+                        "anime_id": str(a_id),
+                        "number": idx,
+                        "title": f"{a['title']} - {vid['title']}",
+                        "stream_url": vid["url"],
+                        "thumbnail_url": vid["thumb"],
+                        "duration": vid["duration"],
+                    })
+                db["episode"].insert_many(eps)
     except Exception:
         # ignore seeding errors in ephemeral env
         pass
