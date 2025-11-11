@@ -42,6 +42,8 @@ def serialize_doc(doc: dict):
 DEMO_ANIME: List[dict] = []
 DEMO_EPISODES: List[dict] = []
 
+HIANIME_URL = "https://hianime.cv"
+
 def build_demo_data():
     global DEMO_ANIME, DEMO_EPISODES
     if DEMO_ANIME and DEMO_EPISODES:
@@ -54,6 +56,7 @@ def build_demo_data():
             "cover_url": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1200&auto=format&fit=crop",
             "tags": ["drama", "sci-fi"],
             "year": 2021,
+            "external_url": HIANIME_URL,
         },
         {
             "id": "demo-2",
@@ -62,14 +65,16 @@ def build_demo_data():
             "cover_url": "https://images.unsplash.com/photo-1520975922284-9d78175cfea0?q=80&w=1200&auto=format&fit=crop",
             "tags": ["fantasy", "adventure"],
             "year": 2020,
+            "external_url": HIANIME_URL,
         },
         {
             "id": "demo-3",
             "title": "Over Goddess",
             "description": "A fallen deity walks the mortal world in search of purpose.",
-            "cover_url": "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop",
+            "cover_url": "https://images.unsplash.com/photo-1519681393784-9d78175cfea0?q=80&w=1200&auto=format&fit=crop",
             "tags": ["supernatural", "romance"],
             "year": 2019,
+            "external_url": HIANIME_URL,
         },
         {
             "id": "demo-4",
@@ -78,6 +83,7 @@ def build_demo_data():
             "cover_url": "https://images.unsplash.com/photo-1503342452485-86ff0a8bccc5?q=80&w=1200&auto=format&fit=crop",
             "tags": ["action", "dark fantasy"],
             "year": 2022,
+            "external_url": HIANIME_URL,
         },
         {
             "id": "demo-5",
@@ -86,6 +92,7 @@ def build_demo_data():
             "cover_url": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop",
             "tags": ["epic", "mythology"],
             "year": 2023,
+            "external_url": HIANIME_URL,
         },
     ]
 
@@ -122,6 +129,7 @@ def build_demo_data():
                 "stream_url": vid["url"],
                 "thumbnail_url": vid["thumb"],
                 "duration": vid["duration"],
+                "external_url": HIANIME_URL,
             }))
     DEMO_EPISODES = eps
 
@@ -141,6 +149,7 @@ async def seed_if_empty():
                     "cover_url": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1200&auto=format&fit=crop",
                     "tags": ["drama", "sci-fi"],
                     "year": 2021,
+                    "external_url": HIANIME_URL,
                 },
                 {
                     "title": "A Will Eternal",
@@ -148,6 +157,7 @@ async def seed_if_empty():
                     "cover_url": "https://images.unsplash.com/photo-1520975922284-9d78175cfea0?q=80&w=1200&auto=format&fit=crop",
                     "tags": ["fantasy", "adventure"],
                     "year": 2020,
+                    "external_url": HIANIME_URL,
                 },
                 {
                     "title": "Over Goddess",
@@ -155,6 +165,7 @@ async def seed_if_empty():
                     "cover_url": "https://images.unsplash.com/photo-1519681393784-9d78175cfea0?q=80&w=1200&auto=format&fit=crop",
                     "tags": ["supernatural", "romance"],
                     "year": 2019,
+                    "external_url": HIANIME_URL,
                 },
                 {
                     "title": "The Demon Hunter",
@@ -162,6 +173,7 @@ async def seed_if_empty():
                     "cover_url": "https://images.unsplash.com/photo-1503342452485-86ff0a8bccc5?q=80&w=1200&auto=format&fit=crop",
                     "tags": ["action", "dark fantasy"],
                     "year": 2022,
+                    "external_url": HIANIME_URL,
                 },
                 {
                     "title": "X Epoch Of Dragon",
@@ -169,6 +181,7 @@ async def seed_if_empty():
                     "cover_url": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop",
                     "tags": ["epic", "mythology"],
                     "year": 2023,
+                    "external_url": HIANIME_URL,
                 },
             ]
 
@@ -204,6 +217,7 @@ async def seed_if_empty():
                         "stream_url": vid["url"],
                         "thumbnail_url": vid["thumb"],
                         "duration": vid["duration"],
+                        "external_url": HIANIME_URL,
                     })
                 db["episode"].insert_many(eps)
     except Exception:
@@ -218,6 +232,7 @@ class AnimeOut(BaseModel):
     cover_url: Optional[str] = None
     tags: Optional[List[str]] = []
     year: Optional[int] = None
+    external_url: Optional[str] = None
 
 class EpisodeOut(BaseModel):
     id: str
@@ -227,6 +242,7 @@ class EpisodeOut(BaseModel):
     stream_url: str
     thumbnail_url: Optional[str] = None
     duration: Optional[int] = None
+    external_url: Optional[str] = None
 
 # Endpoints
 @app.get("/api/anime", response_model=List[AnimeOut])
@@ -317,6 +333,7 @@ def test_database():
             "anime": len(DEMO_ANIME),
             "episodes": len(DEMO_EPISODES)
         }
+        response["external_source"] = HIANIME_URL
     return response
 
 if __name__ == "__main__":

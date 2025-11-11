@@ -48,6 +48,7 @@ class Anime(BaseModel):
     cover_url: Optional[str] = Field(None, description="Cover image URL")
     tags: Optional[List[str]] = Field(default_factory=list, description="List of tags/genres")
     year: Optional[int] = Field(None, description="Release year")
+    external_url: Optional[str] = Field(None, description="External link to watch on another site (e.g., HiAnime)")
 
 class Episode(BaseModel):
     """
@@ -60,5 +61,6 @@ class Episode(BaseModel):
     stream_url: str = Field(..., description="Video stream URL")
     thumbnail_url: Optional[str] = Field(None, description="Episode thumbnail URL")
     duration: Optional[int] = Field(None, description="Duration in minutes")
+    external_url: Optional[str] = Field(None, description="External link to this episode on another site (e.g., HiAnime)")
 
 # The Flames database viewer will automatically read these schemas from GET /schema
