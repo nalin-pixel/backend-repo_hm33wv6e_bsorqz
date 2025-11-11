@@ -12,10 +12,9 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
-# Example schemas (replace with your own):
-
+# Example schemas (kept for reference)
 class User(BaseModel):
     """
     Users collection schema
@@ -38,11 +37,28 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# Anime app schemas
+class Anime(BaseModel):
+    """
+    Anime collection schema
+    Collection name: "anime"
+    """
+    title: str = Field(..., description="Anime title")
+    description: Optional[str] = Field(None, description="Short description")
+    cover_url: Optional[str] = Field(None, description="Cover image URL")
+    tags: Optional[List[str]] = Field(default_factory=list, description="List of tags/genres")
+    year: Optional[int] = Field(None, description="Release year")
 
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+class Episode(BaseModel):
+    """
+    Episode collection schema
+    Collection name: "episode"
+    """
+    anime_id: str = Field(..., description="Related anime ObjectId as string")
+    number: int = Field(..., ge=1, description="Episode number")
+    title: str = Field(..., description="Episode title")
+    stream_url: str = Field(..., description="Video stream URL")
+    thumbnail_url: Optional[str] = Field(None, description="Episode thumbnail URL")
+    duration: Optional[int] = Field(None, description="Duration in minutes")
+
+# The Flames database viewer will automatically read these schemas from GET /schema
